@@ -1,6 +1,5 @@
 package domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,19 +18,17 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="product.all", query="Select p From Product p"),
 	@NamedQuery(name="product.id", query="Select p From Product p Where p.id=:productId"),
-	@NamedQuery(name="product.name", query="Select p From Product p Where p.name Like '%:productName%'"),
+	@NamedQuery(name="product.name", query="Select p From Product p Where p.name Like :productName"),
 	@NamedQuery(name="product.category", query="Select p From Product p Where p.category=:productCategory"),
 	@NamedQuery(name="product.price", query="Select p From Product p Where p.price Between :from And :to"),
-	@NamedQuery(name="product.comments", query="Select c.content From Comment c Where c.product.id=:productId "),
-	@NamedQuery(name="product.comment.id", query="Select c From Comment c Where c.id=:commentId and c.product.id=:productId")
+	@NamedQuery(name="product.id.comments", query="Select Distinct c From Comment c Left Outer Join Product p On c.product.id=:productId Where c.product.id=:productId"),
+    @NamedQuery(name="product.id.comments.delete", query="Select c from Comment c Where c.product.id=:productId")
 })
 public class Product {
 
 	public enum Category {
 		GPU, MOBO, HDD, RAM
 	}
-	
-	@Column(name="Id")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -73,7 +70,7 @@ public class Product {
 	}
 	
 	@XmlTransient
-	@OneToMany(mappedBy="product")
+	@OneToMany(mappedBy="product", orphanRemoval = true)
 	public List<Comment> getComments() {
 		return comments;
 	}

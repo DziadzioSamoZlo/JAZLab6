@@ -7,8 +7,7 @@ import domain.Product;
 
 public class ProductService {
 
-	private static List<Product> db = new ArrayList<Product>();
-	private static int currentId = 1;
+	public static List<Product> db = new ArrayList<Product>();
 	public List<Product> getAll(){
 		return db;
 	}
@@ -20,9 +19,14 @@ public class ProductService {
 		return null;
 	}
 	public void add(Product p){
-		p.setId(++currentId);
+		p.setId(db.size() + 1);
 		db.add(p);
 	}
+	
+	public void delete(Product p) {
+        db.remove(p);
+    }
+	
 	public void update(Product product){
 		for(Product p : db){
 			if(p.getId()==product.getId()){
